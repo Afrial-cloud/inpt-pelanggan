@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Data Pelanggan</title>
+  <style>
+    /* CSS - Tampilan Modern */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f4f6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 50px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      color: #555;
+    }
+
+    input, select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 12px;
+      background-color: #4CAF50;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      overflow: hidden;
+      border-radius: 8px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    tr:hover {
+      background-color: #eaf4ff;
+      transition: background-color 0.2s;
+    }
+
+    .summary {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .search-container {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-container input {
+      width: 70%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .reset-btn {
+      background-color: #ff4c4c;
+      color: #fff;
+    }
+
+    .reset-btn:hover {
+      background-color: #e43e3e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Input Data Pelanggan</h1>
+    <form id="customerForm">
+      <label for="name">Nama:</label>
+      <input type="text" id="name" name="name" placeholder="Masukkan nama pelanggan" required>
+
+      <label for="phone">Nomor Telepon:</label>
+      <input type="tel" id="phone" name="phone" placeholder="Masukkan nomor telepon" required>
+
+      <label for="package">Paket:</label>
+      <select id="package" name="package" required>
+        <option value="">Pilih Paket</option>
+        <option value="Paket A">Paket A</option>
+        <option value="Paket B">Paket B</option>
+        <option value="Paket C">Paket C</option>
+      </select>
+
+      <label for="address">Alamat:</label>
+      <input type="text" id="address" name="address" placeholder="Masukkan alamat pelanggan" required>
+
+      <div>
+        <button type="submit">Tambah Pelanggan</button>
+        <button type="button" class="reset-btn" id="resetForm">Reset</button>
+      </div>
+    </form>
+
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Cari pelanggan berdasarkan nama...">
+      <span class="summary" id="totalCustomers">Total Pelanggan: 0</span>
+    </div>
+
+    <h2>Daftar Pelanggan</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Nomor Telepon</th>
+          <th>Paket</th>
+          <th>Alamat</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="customerTableBody">
+        <!-- Data pelanggan akan ditambahkan di sini -->
+      </tbody>
+    </table>
+  </div>
+  <script>
+    // JavaScript
+    let autoNumber = 1; // Untuk nomor otomatis
+
+    document.getElementById('customerForm').addEventListener('submit', function (e) {
+      e.preventDefault(); // Mencegah refresh halaman
+
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const package = document.getElementById('package').value;
+      const address = document.getElementById('address').value;
+
+      if (name && phone && package && address) {
+        const tableBody = document.getElementById('customerTableBody');
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${autoNumber++}</td>
+          <td>${name}</td>
+          <td>${phone}</td>
+          <td>${package}</td>
+          <td>${address}</td>
+          <td><button class="deleteBtn">Hapus</button></td>
+        `;
+
+        tableBody.appendChild(row);
+
+        // Reset form
+        document.getElementById('name').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('package').value = '';
+        document.getElementById('address').value = '';
+
+        updateTotalCustomers();
+
+        // Tambahkan event listener untuk tombol hapus
+        row.querySelector('.deleteBtn').addEventListener('click', function () {
+          row.remove();
+          updateTotalCustomers();
+        });
+      }
+    });
+
+    document.getElementById('resetForm').addEventListener('click', function () {
+      document.getElementById('name').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('package').value = '';
+      document.getElementById('address').value = '';
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const searchValue = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#customerTableBody tr');
+
+      rows.forEach(row => {
+        const name = row.children[1].textContent.toLowerCase();
+        row.style.display = name.includes(searchValue) ? '' : 'none';
+      });
+    });
+
+    function updateTotalCustomers() {
+      const total = document.querySelectorAll('#customerTableBody tr').length;
+      document.getElementById('totalCustomers').textContent = `Total Pelanggan: ${total}`;
+    }
+  </script>
+</body>
+</html>
